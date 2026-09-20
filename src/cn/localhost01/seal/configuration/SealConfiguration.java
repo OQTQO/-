@@ -44,6 +44,10 @@ public class SealConfiguration {
      * 图片输出尺寸，默认300
      */
     private Integer imageSize = 300;
+    /**
+     * 可选老化效果。null 或 disabled 时保持原始输出。
+     */
+    private SealAging aging;
 
     public SealConfiguration setMainFont(SealFont mainFont) {
         this.mainFont = mainFont;
@@ -90,6 +94,11 @@ public class SealConfiguration {
         return this;
     }
 
+    public SealConfiguration setAging(SealAging aging) {
+        this.aging = aging;
+        return this;
+    }
+
     public SealFont getMainFont() {
         return mainFont;
     }
@@ -124,5 +133,9 @@ public class SealConfiguration {
 
     public Integer getImageSize() {
         return imageSize;
+    }
+
+    public SealAging getAging() {
+        return aging;
     }
 }

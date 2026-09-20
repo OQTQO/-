@@ -24,3 +24,7 @@ jobs:
       - name: Validate Windows bootstrap launcher
         shell: powershell
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\Start-SealStudio.ps1 -CompileOnly
+
+      - name: Run V2 core smoke tests
+        shell: powershell
+        run: java -cp target\classes cn.localhost01.seal.test.SealCoreSmokeTest

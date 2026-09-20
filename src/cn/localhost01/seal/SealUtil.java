@@ -3,6 +3,8 @@ package cn.localhost01.seal;
 import cn.localhost01.seal.configuration.SealCircle;
 import cn.localhost01.seal.configuration.SealConfiguration;
 import cn.localhost01.seal.configuration.SealFont;
+import cn.localhost01.seal.configuration.SealAging;
+import cn.localhost01.seal.effect.SealAgingEffect;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
@@ -147,7 +149,7 @@ public abstract class SealUtil {
         drawFont(g2d, (borderCircleWidth + INIT_BEGIN) * 2, (borderCircleHeight + INIT_BEGIN) * 2, conf.getTitleFont());
 
         g2d.dispose();
-        return bi;
+        return SealAgingEffect.apply(bi, conf.getAging());
     }
 
     /**
@@ -161,6 +163,14 @@ public abstract class SealUtil {
      */
     public static BufferedImage buildPersonSeal(int imageSize, int lineSize, SealFont font, String addString)
             throws Exception {
+        return buildPersonSeal(imageSize, lineSize, font, addString, null);
+    }
+
+    /**
+     * 生成私人印章图片，并可在最终结果上应用老化效果。
+     */
+    public static BufferedImage buildPersonSeal(int imageSize, int lineSize, SealFont font, String addString,
+            SealAging aging) throws Exception {
         if (font == null || font.getFontText().length() < 2 || font.getFontText().length() > 4) {
             throw new Exception("FontText.length illegal!");
         }
@@ -196,11 +206,11 @@ public abstract class SealUtil {
                 g2d.setFont(f);
                 rectangle = f.getStringBounds(font.getFontText().substring(0, 1), context);
                 marginH = (float) (Math.abs(rectangle.getCenterY()) * 2 + marginW) + fixH - 4;
-                g2d.drawString(font.getFontText().substring(0, 1), marginW, marginH);
+                g2d.drawString(font.getFontText().substring(0, 1), marginW + offsetX(font), marginH + offsetY(font));
                 marginW += Math.abs(rectangle.getCenterX()) * 2 + (font.getFontSpace() == null ?
                         INIT_BEGIN :
                         font.getFontSpace());
-                g2d.drawString(font.getFontText().substring(1), marginW, marginH);
+                g2d.drawString(font.getFontText().substring(1), marginW + offsetX(font), marginH + offsetY(font));
 
                 //拉伸
                 BufferedImage nbi = new BufferedImage(imageSize, imageSize, bi.getType());
@@ -226,7 +236,7 @@ public abstract class SealUtil {
             bi = drawFourFont(bi, font, lineSize, imageSize, fixH, fixW);
         }
 
-        return bi;
+        return SealAgingEffect.apply(bi, aging);
     }
 
     /**
@@ -278,11 +288,11 @@ public abstract class SealUtil {
         int oldW = marginW;
 
         if (isWithYin) {
-            g2d.drawString(font.getFontText().substring(2, 3), marginW, marginH);
+            g2d.drawString(font.getFontText().substring(2, 3), marginW + offsetX(font), marginH + offsetY(font));
             marginW += rectangle.getCenterX() * 2 + (font.getFontSpace() == null ? INIT_BEGIN : font.getFontSpace());
         } else {
             marginW += rectangle.getCenterX() * 2 + (font.getFontSpace() == null ? INIT_BEGIN : font.getFontSpace());
-            g2d.drawString(font.getFontText().substring(0, 1), marginW, marginH);
+            g2d.drawString(font.getFontText().substring(0, 1), marginW + offsetX(font), marginH + offsetY(font));
         }
 
         //拉伸
@@ -303,15 +313,15 @@ public abstract class SealUtil {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (isWithYin) {
-            g2d.drawString(font.getFontText().substring(0, 1), marginW, marginH += fixH);
+            g2d.drawString(font.getFontText().substring(0, 1), marginW + offsetX(font), (marginH += fixH) + offsetY(font));
             rectangle = f.getStringBounds(font.getFontText(), context);
             marginH += Math.abs(rectangle.getHeight());
-            g2d.drawString(font.getFontText().substring(1), marginW, marginH);
+            g2d.drawString(font.getFontText().substring(1), marginW + offsetX(font), marginH + offsetY(font));
         } else {
-            g2d.drawString(font.getFontText().substring(1, 2), oldW, marginH += fixH);
+            g2d.drawString(font.getFontText().substring(1, 2), oldW + offsetX(font), (marginH += fixH) + offsetY(font));
             rectangle = f.getStringBounds(font.getFontText(), context);
             marginH += Math.abs(rectangle.getHeight());
-            g2d.drawString(font.getFontText().substring(2, 3), oldW, marginH);
+            g2d.drawString(font.getFontText().substring(2, 3), oldW + offsetX(font), marginH + offsetY(font));
         }
         return bi;
     }
@@ -351,17 +361,17 @@ public abstract class SealUtil {
         Rectangle2D rectangle = f.getStringBounds(font.getFontText().substring(0, 1), context);
         float marginH = (float) (Math.abs(rectangle.getCenterY()) * 2 + marginW) + fixH;
 
-        g2d.drawString(font.getFontText().substring(2, 3), marginW, marginH);
+        g2d.drawString(font.getFontText().substring(2, 3), marginW + offsetX(font), marginH + offsetY(font));
         int oldW = marginW;
         marginW +=
                 Math.abs(rectangle.getCenterX()) * 2 + (font.getFontSpace() == null ? INIT_BEGIN : font.getFontSpace());
 
-        g2d.drawString(font.getFontText().substring(0, 1), marginW, marginH);
+        g2d.drawString(font.getFontText().substring(0, 1), marginW + offsetX(font), marginH + offsetY(font));
         marginH += Math.abs(rectangle.getHeight());
 
-        g2d.drawString(font.getFontText().substring(3, 4), oldW, marginH);
+        g2d.drawString(font.getFontText().substring(3, 4), oldW + offsetX(font), marginH + offsetY(font));
 
-        g2d.drawString(font.getFontText().substring(1, 2), marginW, marginH);
+        g2d.drawString(font.getFontText().substring(1, 2), marginW + offsetX(font), marginH + offsetY(font));
 
         return bi;
     }
@@ -455,8 +465,9 @@ public abstract class SealUtil {
             }
             Font f2 = f.deriveFont(transform);
             g2d.setFont(f2);
-            g2d.drawString(font.getFontText().substring(i, i + 1), (float) (circleRadius + thetaX + INIT_BEGIN),
-                    (float) (circleRadius - thetaY + INIT_BEGIN));
+            g2d.drawString(font.getFontText().substring(i, i + 1),
+                    (float) (circleRadius + thetaX + INIT_BEGIN + offsetX(font)),
+                    (float) (circleRadius - thetaY + INIT_BEGIN + offsetY(font)));
         }
     }
 
@@ -563,7 +574,7 @@ public abstract class SealUtil {
             }
             Font f2 = f.deriveFont(affineTransform);
             g2d.setFont(f2);
-            g2d.drawString(c, x.intValue() + INIT_BEGIN, y.intValue() + INIT_BEGIN);
+            g2d.drawString(c, x.intValue() + INIT_BEGIN + offsetX(font), y.intValue() + INIT_BEGIN + offsetY(font));
         }
     }
 
@@ -604,7 +615,9 @@ public abstract class SealUtil {
             float marginSize = INIT_BEGIN + (float) (circleHeight / 2 - y / 2);
             for (String fontText : fontTexts) {
                 Rectangle2D rectangle2D = f.getStringBounds(fontText, context);
-                g2d.drawString(fontText, (float) (circleWidth / 2 - rectangle2D.getCenterX() + 1), marginSize);
+                g2d.drawString(fontText,
+                        (float) (circleWidth / 2 - rectangle2D.getCenterX() + 1 + offsetX(font)),
+                        marginSize + offsetY(font));
                 marginSize += Math.abs(rectangle2D.getHeight());
             }
         } else {
@@ -613,8 +626,18 @@ public abstract class SealUtil {
             float marginSize = font.getMarginSize() == null ?
                     (float) (circleHeight / 2 - rectangle2D.getCenterY()) :
                     (float) (circleHeight / 2 - rectangle2D.getCenterY()) + (float) font.getMarginSize();
-            g2d.drawString(font.getFontText(), (float) (circleWidth / 2 - rectangle2D.getCenterX() + 1), marginSize);
+            g2d.drawString(font.getFontText(),
+                    (float) (circleWidth / 2 - rectangle2D.getCenterX() + 1 + offsetX(font)),
+                    marginSize + offsetY(font));
         }
+    }
+
+    private static int offsetX(SealFont font) {
+        return font == null ? 0 : font.getOffsetX();
+    }
+
+    private static int offsetY(SealFont font) {
+        return font == null ? 0 : font.getOffsetY();
     }
 
     /**
