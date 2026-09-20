@@ -11,12 +11,21 @@ public final class SealStudioApp {
         SwingUtilities.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                UIManager.put("Label.font", new Font("Microsoft YaHei UI", Font.PLAIN, 13));
-                UIManager.put("Button.font", new Font("Microsoft YaHei UI", Font.PLAIN, 13));
-                UIManager.put("TextField.font", new Font("Microsoft YaHei UI", Font.PLAIN, 13));
-                UIManager.put("ComboBox.font", new Font("Microsoft YaHei UI", Font.PLAIN, 13));
-                UIManager.put("Spinner.font", new Font("Microsoft YaHei UI", Font.PLAIN, 13));
-                UIManager.put("TabbedPane.font", new Font("Microsoft YaHei UI", Font.BOLD, 14));
+
+                Font normal = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
+                Font bold = new Font("Microsoft YaHei UI", Font.BOLD, 14);
+
+                UIManager.put("Label.font", normal);
+                UIManager.put("Button.font", normal);
+                UIManager.put("CheckBox.font", normal);
+                UIManager.put("RadioButton.font", normal);
+                UIManager.put("TextField.font", normal);
+                UIManager.put("ComboBox.font", normal);
+                UIManager.put("Spinner.font", normal);
+                UIManager.put("TabbedPane.font", bold);
+                UIManager.put("TabbedPane.selected", new Color(248, 239, 239));
+                UIManager.put("TabbedPane.contentAreaColor", Color.WHITE);
+                UIManager.put("ScrollPane.border", BorderFactory.createEmptyBorder());
             } catch (Exception ignored) {
             }
 
