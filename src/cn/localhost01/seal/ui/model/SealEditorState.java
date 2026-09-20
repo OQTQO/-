@@ -39,7 +39,19 @@ public final class SealEditorState {
                 .setBorderCircle(border.toCircle(false))
                 .setBorderInnerCircle(borderInner.toCircle(true))
                 .setInnerCircle(inner.toCircle(true))
-                .setAging(aging);
+                .setAging(copyAging());
+    }
+
+    private SealAging copyAging() {
+        return new SealAging()
+                .setEnabled(aging.isEnabled())
+                .setIntensity(aging.getIntensity())
+                .setGrainSize(aging.getGrainSize())
+                .setDamageSize(aging.getDamageSize())
+                .setScratchStrength(aging.getScratchStrength())
+                .setOffsetX(aging.getOffsetX())
+                .setOffsetY(aging.getOffsetY())
+                .setSeed(aging.getSeed());
     }
 
     public void applyOvalPreset() {
