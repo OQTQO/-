@@ -49,9 +49,9 @@ function Find-UsableJavac {
         $candidates.Add($local)
     }
 
-    foreach ($home in @($env:JAVA_HOME, $env:JDK_HOME)) {
-        if (-not [string]::IsNullOrWhiteSpace($home)) {
-            $candidates.Add((Join-Path $home "bin\javac.exe"))
+    foreach ($javaHomeCandidate in @($env:JAVA_HOME, $env:JDK_HOME)) {
+        if (-not [string]::IsNullOrWhiteSpace($javaHomeCandidate)) {
+            $candidates.Add((Join-Path $javaHomeCandidate "bin\javac.exe"))
         }
     }
 
