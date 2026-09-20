@@ -40,6 +40,14 @@ public class SealFont {
      * 边距（环边距或上边距）
      */
     private Integer marginSize;
+    /**
+     * 文字整体水平偏移。正值向右，负值向左。
+     */
+    private Integer offsetX = 0;
+    /**
+     * 文字整体垂直偏移。正值向下，负值向上。
+     */
+    private Integer offsetY = 0;
 
     /**
      * 获取系统支持的字形名集合
@@ -78,6 +86,16 @@ public class SealFont {
         return this;
     }
 
+    public SealFont setOffsetX(Integer offsetX) {
+        this.offsetX = offsetX == null ? 0 : offsetX;
+        return this;
+    }
+
+    public SealFont setOffsetY(Integer offsetY) {
+        this.offsetY = offsetY == null ? 0 : offsetY;
+        return this;
+    }
+
     public String getFontText() {
         return fontText;
     }
@@ -100,5 +118,13 @@ public class SealFont {
 
     public Boolean isBold() {
         return isBold;
+    }
+
+    public Integer getOffsetX() {
+        return offsetX == null ? 0 : offsetX;
+    }
+
+    public Integer getOffsetY() {
+        return offsetY == null ? 0 : offsetY;
     }
 }
